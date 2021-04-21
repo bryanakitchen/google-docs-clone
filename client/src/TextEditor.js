@@ -33,15 +33,13 @@ export default function TextEditor() {
         if (socket == null || quill == null) return;
 
         const handler = (delta, oldDelta, source) => {
-            if (source !== 'user') return;
-            // delta is what is changing
-            socket.emit('send-changes', delta)
+            quill.updateContents(delta);
         }
 
-        quill.on('text-change', handler)
+        socket.on('receive-changes', handler)
 
         return () => {
-            quill.off('text-change', handler)
+            socket.off('receive-changes', handler)
         }
     }, [socket, quill])
 
