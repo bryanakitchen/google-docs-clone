@@ -3,7 +3,6 @@ import Quill from "quill"
 import "quill/dist/quill.snow.css"
 
 export default function TextEditor() {
-    // const wrapperRef = useRef();
 
     const wrapperRef = useCallback((wrapper) => {
         if (wrapper == null) return;
