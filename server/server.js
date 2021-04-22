@@ -1,7 +1,10 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const Document = require('./Document.js');
 
-mongoose.connect('mongodb://localhost/google-docs-clone', {
+// mongodb://localhost/google-docs-clone
+
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
