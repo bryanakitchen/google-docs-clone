@@ -10,7 +10,7 @@ mongoose.connect('mongodb://localhost/google-docs-clone', {
 
 const io = require('socket.io')(3001, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: 'https://google-docs-clone.netlify.app/',
         methods: ['GET', 'POST']
     }
 })

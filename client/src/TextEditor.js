@@ -26,7 +26,7 @@ export default function TextEditor() {
 
     // makes connection to server
     useEffect(() => {
-        const s = io("http://localhost:3001");
+        const s = io("https://google-docs-clone-server.herokuapp.com/");
         setSocket(s);
 
         return () => {
@@ -106,12 +106,9 @@ export default function TextEditor() {
         q.setText('Loading...');
 
         setQuill(q);
-
     }, [])
 
     return (
-        <div className="container" ref={wrapperRef} >
-
-        </div>
+        <div className="container" ref={wrapperRef} ></div>
     )
 }
