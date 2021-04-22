@@ -19,13 +19,18 @@ const defaultValue = "";
 
 io.on("connection", socket => {
     socket.on('get-document', documentId => {
-        const document = findOrCreateDocument(documentId);
+        const document = await findOrCreateDocument(documentId);
         // creates a room where user can edit
         socket.join(documentId);
         socket.emit('load-document', document.data);
         // send changes to specific room when broadcasted
         socket.on('send-changes', delta => {
             socket.broadcast.to(documentId).emit('receive-changes', delta);
+        })
+
+        // saves/updates the data
+        socket.on('save-document', async data => {
+            await Document.findByIdAndUpdate(documentId, { data })
         })
     })
 
