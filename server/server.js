@@ -18,7 +18,7 @@ const io = require('socket.io')(3001, {
 const defaultValue = "";
 
 io.on("connection", socket => {
-    socket.on('get-document', documentId => {
+    socket.on('get-document', async documentId => {
         const document = await findOrCreateDocument(documentId);
         // creates a room where user can edit
         socket.join(documentId);
