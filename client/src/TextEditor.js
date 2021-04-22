@@ -19,6 +19,15 @@ export default function TextEditor() {
     const [socket, setSocket] = useState();
     const [quill, setQuill] = useState();
 
+    // useEffect(() => {
+
+
+    //     return () => {
+
+    //     }
+    // }, [])
+
+    // makes connection to server
     useEffect(() => {
         const s = io("http://localhost:3001");
         setSocket(s);
@@ -28,11 +37,11 @@ export default function TextEditor() {
         }
     }, [])
 
-    //detects changes
+    //sends changes
     useEffect(() => {
         if (socket == null || quill == null) return;
 
-        const handler = (delta, oldDelta, source) => {
+        const handler = delta => {
             quill.updateContents(delta);
         }
 
@@ -40,6 +49,22 @@ export default function TextEditor() {
 
         return () => {
             socket.off('receive-changes', handler)
+        }
+    }, [socket, quill])
+
+    //detects changes
+    useEffect(() => {
+        if (socket == null || quill == null) return;
+
+        const handler = (delta, oldDelta, source) => {
+            if (source !== "user") return;
+            socket.emit("send-changes", delta)
+        }
+
+        quill.on('text-change', handler)
+
+        return () => {
+            quill.off('text-change', handler)
         }
     }, [socket, quill])
 
