@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { io } from 'socket.io-client';
+import { useParams } from 'react-router-dom';
 
 // see Quill docs for options
 const TOOLBAR_OPTIONS = [
@@ -16,16 +17,10 @@ const TOOLBAR_OPTIONS = [
 ]
 
 export default function TextEditor() {
+    // deconstructed to grab the id from url search params
+    const { id: documentId } = useParams();
     const [socket, setSocket] = useState();
     const [quill, setQuill] = useState();
-
-    // useEffect(() => {
-
-
-    //     return () => {
-
-    //     }
-    // }, [])
 
     // makes connection to server
     useEffect(() => {
@@ -36,6 +31,23 @@ export default function TextEditor() {
             s.disconnect();
         }
     }, [])
+
+    useEffect(() => {
+        if (socket == null || quill == null) return;
+        // listen to event once - cleans up after listening
+        socket.once('load-document', document => {
+            quill.setContents(document);
+            quill.enable()
+        })
+        // tell server what document we are working on
+        socket.emit('get-document', documentId);
+
+        return () => {
+
+        }
+    }, [socket, quill, documentId])
+
+
 
     //sends changes
     useEffect(() => {
@@ -76,6 +88,12 @@ export default function TextEditor() {
         const editor = document.createElement('div');
         wrapper.append(editor);
         const q = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } })
+
+        // can also use q.enable(false) instead of q.disable();
+        q.disable()
+        // loading text until server responds with the document
+        q.setText('Loading...');
+
         setQuill(q);
 
     }, [])
